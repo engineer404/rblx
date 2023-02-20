@@ -5,8 +5,8 @@ BEAM.Color = ColorSequence.new(Color3.new(1, 0, 0))
 BEAM.Transparency = NumberSequence.new(0)
 BEAM.FaceCamera = true
 BEAM.Segments = 2000000
-BEAM.Width0 = 0.1
-BEAM.Width1 = 0.1
+BEAM.Width0 = 0.4
+BEAM.Width1 = 0.4
 local Timer = {}
 Timer.__index = Timer
 local RUNSERVICE = game:GetService("RunService")
@@ -100,31 +100,31 @@ end
 -- Public Constructors
 
 function Trajectory.new(gravity)
-	local self = setmetatable({}, Trajectory)
+	local f = setmetatable({}, Trajectory)
 
-	self.Gravity = gravity
-	self.TimeStep = 0.1
-	self.MaxTime = 122
-	self.MinSpeed = 0.001
-	self.MaxBounce = 0
+	f.Gravity = gravity
+	f.TimeStep = 0.1
+	f.MaxTime = 122
+	f.MinSpeed = 0.001
+	f.MaxBounce = 0
 
-	return self
+	return f
 end
 
 -- Public Methods
 
 function Trajectory:Velocity(v0, t)
 	-- g*t + v0
-	return self.Gravity*t + v0
+	return f.Gravity*t + v0
 end
 
 function Trajectory:Position(x0, v0, t)
 	-- 0.5*g*t^2 + v0*t + x0
-	return 0.5*self.Gravity*t*t + v0*t + x0
+	return 0.5*f.Gravity*t*t + v0*t + x0
 end
 
 function Trajectory:PlaneQuadraticIntersection(x0, v0, p, n)
-	local a = (0.5*self.Gravity):Dot(n)
+	local a = (0.5*f.Gravity):Dot(n)
 	local b = v0:Dot(n)
 	local c = (x0 - p):Dot(n)
 
@@ -141,17 +141,17 @@ function Trajectory:CalculateSingle(x0, v0, ignoreList)
 	local hit, pos, normal, material
 
 	repeat
-		local p0 = self:Position(x0, v0, t)
-		local p1 = self:Position(x0, v0, t + self.TimeStep)
-		t = t + self.TimeStep
+		local p0 = f:Position(x0, v0, t)
+		local p1 = f:Position(x0, v0, t + f.TimeStep)
+		t = t + f.TimeStep
 
 		local ray = Ray.new(p0, p1 - p0)
 		hit, pos, normal, material = game.Workspace:FindPartOnRayWithIgnoreList(ray, ignoreList, false, true)
-	until (hit or t >= self.MaxTime)
+	until (hit or t >= f.MaxTime)
 
 	if (hit) then
-		local t = self:PlaneQuadraticIntersection(x0, v0, pos, normal)
-		local x1 = self:Position(x0, v0, t)
+		local t = f:PlaneQuadraticIntersection(x0, v0, pos, normal)
+		local x1 = f:Position(x0, v0, t)
 		return t, normal, PhysicalProperties.new(material)
 	end
 end
@@ -159,12 +159,12 @@ end
 function Trajectory:Cast(x0, v0, material, ignoreList)
 	local bounce = 0
 	local t, x1, normal, pB
-	local speed2 = self.MinSpeed*self.MinSpeed
+	local speed2 = f.MinSpeed*f.MinSpeed
 	local pA = PhysicalProperties.new(material) 
 	local path = {}
 
-	while (v0:Dot(v0) >= speed2 and bounce <= self.MaxBounce) do
-		t, normal, pB = self:CalculateSingle(x0, v0, ignoreList)
+	while (v0:Dot(v0) >= speed2 and bounce <= f.MaxBounce) do
+		t, normal, pB = f:CalculateSingle(x0, v0, ignoreList)
 		if (t) then
 			table.insert(path, {x0, v0, t})
 
@@ -173,11 +173,11 @@ function Trajectory:Cast(x0, v0, material, ignoreList)
 			local dot = 1 - math.abs(v0.Unit:Dot(normal))
 
 			print(dot)
-			x0 = self:Position(x0, v0, t)
-			v0 = reflect(self:Velocity(v0, t), normal) * elast + v0 * frict * dot
+			x0 = f:Position(x0, v0, t)
+			v0 = reflect(f:Velocity(v0, t), normal) * elast + v0 * frict * dot
 			bounce = bounce + 1
 		else
-			bounce = self.MaxBounce + 1
+			bounce = f.MaxBounce + 1
 		end
 	end
 
@@ -209,7 +209,7 @@ end
 function Trajectory:Draw(path)
 	for i = 1, #path do
 		local x0, v0, t = unpack(path[i])
-		drawBeamProjectile(self.Gravity, v0, x0, t)
+		drawBeamProjectile(f.Gravity, v0, x0, t)
 	end
 end
 
