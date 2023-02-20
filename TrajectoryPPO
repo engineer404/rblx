@@ -209,7 +209,7 @@ end
 function Trajectory:Draw(path)
 	for i = 1, #path do
 		local x0, v0, t = unpack(path[i])
-		drawBeamProjectile(f.Gravity, v0, x0, t)
+		drawBeamProjectile(self.Gravity, v0, x0, t)
 	end
 end
 
