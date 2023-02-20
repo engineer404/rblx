@@ -50,8 +50,7 @@ end
 function Timer:Destroy()
 	self.TimerEvent:Disconnect()
 end
-local TimerClass = require(script:WaitForChild("Timer"))
-
+local TimerClass = Timer;
 -- Class
 
 local Trajectory = {}
