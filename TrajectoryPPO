@@ -142,7 +142,7 @@ function Trajectory:CalculateSingle(x0, v0, ignoreList)
 
 	repeat
 		local p0 = self:Position(x0, v0, t)
-		local p1 = self:Position(x0, v0, t + f.TimeStep)
+		local p1 = self:Position(x0, v0, t + self.TimeStep)
 		t = t + self.TimeStep
 
 		local ray = Ray.new(p0, p1 - p0)
