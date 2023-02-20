@@ -105,7 +105,7 @@ function Trajectory.new(gravity)
 	self.Gravity = gravity
 	self.TimeStep = 0.1
 	self.MaxTime = 122
-	self.MinSpeed = 15
+	self.MinSpeed = 0.001
 	self.MaxBounce = 0
 
 	return self
